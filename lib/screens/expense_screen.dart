@@ -21,16 +21,26 @@ class ExpenseScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Rata-rata Harian: Rp ${avgDaily.toStringAsFixed(0)}",
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.blue)),
+            Text(
+              "Rata-rata Harian: Rp ${avgDaily.toStringAsFixed(0)}",
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
+              ),
+            ),
             if (highest != null)
-              Text("Pengeluaran Tertinggi: ${highest.title} - Rp ${highest.amount}",
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.red)),
+              Text(
+                "Pengeluaran Tertinggi: ${highest.title} - Rp ${highest.amount.toStringAsFixed(0)}",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+              ),
             const SizedBox(height: 16),
-            const Text("Daftar Pengeluaran",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text(
+              "Daftar Pengeluaran",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
             Expanded(
               child: ListView.builder(
@@ -43,12 +53,12 @@ class ExpenseScreen extends StatelessWidget {
                     child: ListTile(
                       leading: CircleAvatar(
                         child: Text(
-                          e.category.name[0].toUpperCase(),
+                          e.category[0].toUpperCase(), // ambil huruf pertama
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
                       title: Text(e.title),
-                      subtitle: Text("${e.category.name} • ${e.description}"),
+                      subtitle: Text("${e.category} • ${e.description}"),
                       trailing: Text("Rp ${e.amount.toStringAsFixed(0)}"),
                     ),
                   );
