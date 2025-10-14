@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/expense.dart';
 import 'add_expense_screen.dart';
+import 'edit_expense_screen.dart';
+import 'category_screen.dart';
 
 class ExpenseScreen extends StatefulWidget {
   const ExpenseScreen({super.key});
@@ -10,45 +12,47 @@ class ExpenseScreen extends StatefulWidget {
 }
 
 class _ExpenseScreenState extends State<ExpenseScreen> {
-  List<Expense> expenses = [
+  final List<Expense> _expenses = [
     Expense(
-      id: '1',
-      title: 'Makan Siang',
-      description: 'Nasi padang dan es teh',
+      id: "1",
+      title: "Makan Siang",
+      description: "Nasi goreng",
       amount: 25000,
-      category: 'Makanan',
+      category: "Makanan",
       date: DateTime.now(),
     ),
     Expense(
-      id: '2',
-      title: 'Transportasi',
-      description: 'Naik ojek online ke kampus',
+      id: "2",
+      title: "Ojek Online",
+      description: "Pergi ke kampus",
       amount: 15000,
-      category: 'Transportasi',
+      category: "Transportasi",
       date: DateTime.now(),
     ),
     Expense(
-      id: '3',
-      title: 'Kopi',
-      description: 'Ngopi di kafe sore hari',
-      amount: 30000,
-      category: 'Hiburan',
+      id: "3",
+      title: "Beli Pulsa",
+      description: "Pulsa 20rb",
+      amount: 20000,
+      category: "Belanja",
       date: DateTime.now(),
     ),
   ];
 
-  void _addExpense(Expense expense) {
+  void _addExpense(Expense e) {
+    setState(() => _expenses.add(e));
+  }
+
+  void _editExpense(Expense e) {
     setState(() {
-      expenses.add(expense);
+      final index = _expenses.indexWhere((ex) => ex.id == e.id);
+      if (index != -1) _expenses[index] = e;
     });
   }
 
-  void _editExpense(Expense updatedExpense) {
+  void _deleteExpense(String id) {
     setState(() {
-      final index = expenses.indexWhere((e) => e.id == updatedExpense.id);
-      if (index != -1) {
-        expenses[index] = updatedExpense;
-      }
+      _expenses.removeWhere((e) => e.id == id);
     });
   }
 
@@ -56,9 +60,7 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => AddExpenseScreen(
-          onAdd: _addExpense,
-        ),
+        builder: (_) => AddExpenseScreen(onAdd: _addExpense),
       ),
     );
   }
@@ -67,72 +69,99 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => AddExpenseScreen(
-          onAdd: _editExpense,
+        builder: (_) => EditExpenseScreen(
           existingExpense: expense,
+          onEdit: _editExpense,
         ),
+      ),
+    );
+  }
+
+  void _openCategoryScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const CategoryScreen(),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    double total = expenses.fold(0, (sum, e) => sum + e.amount);
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Expense Tracker"),
-        backgroundColor: Colors.blue,
+        title: const Text("Daftar Pengeluaran"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.category),
+            tooltip: "Kelola Kategori",
+            onPressed: _openCategoryScreen,
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _openAddExpense,
-        backgroundColor: Colors.blue,
         child: const Icon(Icons.add),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Total Pengeluaran: Rp ${total.toStringAsFixed(0)}",
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.blue)),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView.builder(
-                itemCount: expenses.length,
-                itemBuilder: (context, index) {
-                  final e = expenses[index];
-                  return Card(
-                    elevation: 3,
-                    margin: const EdgeInsets.symmetric(vertical: 6),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.blue[100],
-                        child: Text(
-                          e.category[0].toUpperCase(),
+      body: _expenses.isEmpty
+          ? const Center(child: Text("Belum ada pengeluaran"))
+          : ListView.builder(
+              itemCount: _expenses.length,
+              itemBuilder: (context, index) {
+                final e = _expenses[index];
+                return Card(
+                  margin: const EdgeInsets.all(8),
+                  child: ListTile(
+                    title: Text(e.title),
+                    subtitle: Text("${e.category} • ${e.description}"),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          "Rp ${e.amount.toStringAsFixed(0)}",
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                      ),
-                      title: Text(e.title),
-                      subtitle: Text("${e.category} • ${e.description}"),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text("Rp ${e.amount.toStringAsFixed(0)}"),
-                          IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.orange),
-                            onPressed: () => _openEditExpense(e),
-                          ),
-                        ],
-                      ),
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          tooltip: "Edit",
+                          onPressed: () => _openEditExpense(e),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          tooltip: "Hapus",
+                          onPressed: () => _showDeleteDialog(e),
+                        ),
+                      ],
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
-          ],
-        ),
+    );
+  }
+
+  void _showDeleteDialog(Expense e) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Hapus Pengeluaran"),
+        content: Text("Apakah kamu yakin ingin menghapus '${e.title}'?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text("Batal"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              _deleteExpense(e.id);
+            },
+            child: const Text(
+              "Hapus",
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
       ),
     );
   }

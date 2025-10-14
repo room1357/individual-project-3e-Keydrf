@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/expense.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   final Function(Expense) onAdd;
-  final Expense? existingExpense; 
 
-  const AddExpenseScreen({
-    super.key,
-    required this.onAdd,
-    this.existingExpense, 
-  });
+  const AddExpenseScreen({super.key, required this.onAdd});
 
   @override
   State<AddExpenseScreen> createState() => _AddExpenseScreenState();
@@ -20,31 +16,33 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _titleController = TextEditingController();
   final _descController = TextEditingController();
   final _amountController = TextEditingController();
-  final _categoryController = TextEditingController();
+  List<String> _categories = [];
+  String? _selectedCategory;
 
   @override
   void initState() {
     super.initState();
-    // ✅ isi field jika sedang edit
-    if (widget.existingExpense != null) {
-      _titleController.text = widget.existingExpense!.title;
-      _descController.text = widget.existingExpense!.description;
-      _amountController.text = widget.existingExpense!.amount.toString();
-      _categoryController.text = widget.existingExpense!.category;
-    }
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getStringList('categories');
+    setState(() {
+      _categories = saved ?? ['Makanan', 'Transportasi', 'Belanja'];
+    });
   }
 
   void _submit() {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && _selectedCategory != null) {
       final expense = Expense(
-        id: widget.existingExpense?.id ?? DateTime.now().toString(),
+        id: DateTime.now().toString(),
         title: _titleController.text,
         description: _descController.text,
         amount: double.parse(_amountController.text),
-        category: _categoryController.text,
+        category: _selectedCategory!,
         date: DateTime.now(),
       );
-
       widget.onAdd(expense);
       Navigator.pop(context);
     }
@@ -52,13 +50,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isEdit = widget.existingExpense != null;
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEdit ? "Edit Pengeluaran" : "Tambah Pengeluaran"),
-        backgroundColor: Colors.blue,
-      ),
+      appBar: AppBar(title: const Text("Tambah Pengeluaran")),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -67,39 +60,34 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             children: [
               TextFormField(
                 controller: _titleController,
-                decoration: const InputDecoration(labelText: "Judul Pengeluaran"),
-                validator: (value) =>
-                    value!.isEmpty ? "Judul tidak boleh kosong" : null,
+                decoration: const InputDecoration(labelText: "Judul"),
+                validator: (val) => val!.isEmpty ? "Wajib diisi" : null,
               ),
               TextFormField(
                 controller: _descController,
-                decoration:
-                    const InputDecoration(labelText: "Deskripsi (opsional)"),
+                decoration: const InputDecoration(labelText: "Deskripsi"),
               ),
               TextFormField(
                 controller: _amountController,
-                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(labelText: "Jumlah (Rp)"),
-                validator: (value) =>
-                    value!.isEmpty ? "Masukkan jumlah" : null,
+                keyboardType: TextInputType.number,
+                validator: (val) => val!.isEmpty ? "Masukkan jumlah" : null,
               ),
-              TextFormField(
-                controller: _categoryController,
-                decoration: const InputDecoration(labelText: "Kategori"),
-                validator: (value) =>
-                    value!.isEmpty ? "Kategori tidak boleh kosong" : null,
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _selectedCategory,
+                hint: const Text("Pilih Kategori"),
+                items: _categories
+                    .map((cat) =>
+                        DropdownMenuItem(value: cat, child: Text(cat)))
+                    .toList(),
+                onChanged: (val) => setState(() => _selectedCategory = val),
+                validator: (val) => val == null ? "Pilih kategori" : null,
               ),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _submit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.all(12),
-                ),
-                child: Text(
-                  isEdit ? "Simpan Perubahan" : "Simpan Pengeluaran",
-                  style: const TextStyle(fontSize: 16),
-                ),
+                child: const Text("Simpan"),
               ),
             ],
           ),

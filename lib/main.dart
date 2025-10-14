@@ -5,7 +5,8 @@ import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/about_screen.dart';
-import 'screens/expense_screen.dart'; // ⬅️ tambahkan import
+import 'screens/expense_screen.dart'; 
+import 'screens/category_screen.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -28,7 +29,8 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const ProfileScreen(),
         '/settings': (context) => const SettingsScreen(),
         '/about': (context) => const AboutScreen(),
-        '/expense': (context) => const ExpenseScreen(), // ⬅️ route baru
+        '/expense': (context) => const ExpenseScreen(), 
+        '/category': (context) => const CategoryScreen(), 
       },
     );
   }

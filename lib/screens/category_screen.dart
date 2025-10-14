@@ -1,67 +1,143 @@
 import 'package:flutter/material.dart';
-import '../models/category.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class CategoryScreen extends StatefulWidget {
-  final List<Category> categories;
-  final Function(Category) onAdd;
-
-  const CategoryScreen({
-    super.key,
-    required this.categories,
-    required this.onAdd,
-  });
+  const CategoryScreen({super.key});
 
   @override
   State<CategoryScreen> createState() => _CategoryScreenState();
 }
 
 class _CategoryScreenState extends State<CategoryScreen> {
-  final _controller = TextEditingController();
+  List<String> _categories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getStringList('categories');
+    setState(() {
+      _categories = saved ?? ['Makanan', 'Transportasi', 'Belanja'];
+    });
+  }
+
+  Future<void> _saveCategories() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('categories', _categories);
+  }
 
   void _addCategory() {
-    if (_controller.text.isNotEmpty) {
-      final newCategory = Category(
-        id: DateTime.now().toString(),
-        name: _controller.text,
-        icon: "📌",
-      );
-      widget.onAdd(newCategory);
-      _controller.clear();
-      setState(() {});
-    }
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Tambah Kategori"),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(labelText: 'Nama Kategori'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Batal"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (controller.text.isNotEmpty) {
+                setState(() {
+                  _categories.add(controller.text);
+                });
+                _saveCategories();
+              }
+              Navigator.pop(context);
+            },
+            child: const Text("Simpan"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _editCategory(int index) {
+    final controller = TextEditingController(text: _categories[index]);
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Edit Kategori"),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(labelText: 'Nama Kategori'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Batal"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (controller.text.isNotEmpty) {
+                setState(() {
+                  _categories[index] = controller.text;
+                });
+                _saveCategories();
+              }
+              Navigator.pop(context);
+            },
+            child: const Text("Update"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _deleteCategory(int index) {
+    setState(() {
+      _categories.removeAt(index);
+    });
+    _saveCategories();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Kelola Kategori')),
-      body: Column(
-        children: [
-          TextField(
-            controller: _controller,
-            decoration: const InputDecoration(
-              labelText: 'Nama kategori',
-              contentPadding: EdgeInsets.all(8),
-            ),
-          ),
-          ElevatedButton(
+      appBar: AppBar(
+        title: const Text("Kelola Kategori"),
+        backgroundColor: Colors.blue,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
             onPressed: _addCategory,
-            child: const Text('Tambah'),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: widget.categories.length,
-              itemBuilder: (ctx, i) {
-                final cat = widget.categories[i];
-                return ListTile(
-                  leading: Text(cat.icon),
-                  title: Text(cat.name),
-                );
-              },
-            ),
           ),
         ],
       ),
+      body: _categories.isEmpty
+          ? const Center(child: Text("Belum ada kategori"))
+          : ListView.builder(
+              itemCount: _categories.length,
+              itemBuilder: (context, index) => Card(
+                child: ListTile(
+                  title: Text(_categories[index]),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.orange),
+                        onPressed: () => _editCategory(index),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _deleteCategory(index),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
     );
   }
 }
