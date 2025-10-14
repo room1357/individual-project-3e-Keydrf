@@ -1,10 +1,10 @@
 class Expense {
   final String id;
-  final String title;
-  final String description;
-  final double amount;
-  final String category;
-  final DateTime date;
+  String title;
+  String description;
+  double amount;
+  String category;
+  DateTime date;
 
   Expense({
     required this.id,

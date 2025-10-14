@@ -3,10 +3,12 @@ import '../models/expense.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   final Function(Expense) onAdd;
+  final Expense? existingExpense; 
 
   const AddExpenseScreen({
     super.key,
     required this.onAdd,
+    this.existingExpense, 
   });
 
   @override
@@ -20,10 +22,22 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _amountController = TextEditingController();
   final _categoryController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    // ✅ isi field jika sedang edit
+    if (widget.existingExpense != null) {
+      _titleController.text = widget.existingExpense!.title;
+      _descController.text = widget.existingExpense!.description;
+      _amountController.text = widget.existingExpense!.amount.toString();
+      _categoryController.text = widget.existingExpense!.category;
+    }
+  }
+
   void _submit() {
     if (_formKey.currentState!.validate()) {
       final expense = Expense(
-        id: DateTime.now().toString(),
+        id: widget.existingExpense?.id ?? DateTime.now().toString(),
         title: _titleController.text,
         description: _descController.text,
         amount: double.parse(_amountController.text),
@@ -38,9 +52,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isEdit = widget.existingExpense != null;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Tambah Pengeluaran"),
+        title: Text(isEdit ? "Edit Pengeluaran" : "Tambah Pengeluaran"),
         backgroundColor: Colors.blue,
       ),
       body: Padding(
@@ -51,8 +67,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             children: [
               TextFormField(
                 controller: _titleController,
-                decoration:
-                    const InputDecoration(labelText: "Judul Pengeluaran"),
+                decoration: const InputDecoration(labelText: "Judul Pengeluaran"),
                 validator: (value) =>
                     value!.isEmpty ? "Judul tidak boleh kosong" : null,
               ),
@@ -64,17 +79,15 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               TextFormField(
                 controller: _amountController,
                 keyboardType: TextInputType.number,
-                decoration:
-                    const InputDecoration(labelText: "Jumlah (Rp)"),
+                decoration: const InputDecoration(labelText: "Jumlah (Rp)"),
                 validator: (value) =>
                     value!.isEmpty ? "Masukkan jumlah" : null,
               ),
               TextFormField(
                 controller: _categoryController,
-                decoration:
-                    const InputDecoration(labelText: "Kategori"),
+                decoration: const InputDecoration(labelText: "Kategori"),
                 validator: (value) =>
-                    value!.isEmpty ? "Masukkan kategori" : null,
+                    value!.isEmpty ? "Kategori tidak boleh kosong" : null,
               ),
               const SizedBox(height: 24),
               ElevatedButton(
@@ -83,9 +96,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                   backgroundColor: Colors.blue,
                   padding: const EdgeInsets.all(12),
                 ),
-                child: const Text(
-                  "Simpan Pengeluaran",
-                  style: TextStyle(fontSize: 16),
+                child: Text(
+                  isEdit ? "Simpan Perubahan" : "Simpan Pengeluaran",
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
             ],
