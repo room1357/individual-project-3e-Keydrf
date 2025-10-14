@@ -5,7 +5,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold( 
       backgroundColor: Colors.blue.shade50,
       body: Center(
         child: SingleChildScrollView(
@@ -74,7 +74,7 @@ class LoginScreen extends StatelessWidget {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.pushReplacementNamed(context, '/home');
+                            Navigator.pushReplacementNamed(context, '/');
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
