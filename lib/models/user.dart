@@ -22,7 +22,7 @@ final List<User> users = [
   User(
     fullName: 'Keysha Arindra',
     email: 'keydrf@example.com',
-    username: 'keydrf',
-    password: 'password123',
+    username: 'key',
+    password: '123',
   ),
 ];
