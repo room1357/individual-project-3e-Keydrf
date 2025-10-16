@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import '../models/user.dart'; // pastikan model user diimport
 import 'expense_screen.dart';
-import 'advanced_expense_list_screen.dart'; // ⬅️ import advanced screen
+import 'advanced_expense_list_screen.dart'; // layar advanced
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final User user; 
+
+  const HomeScreen({super.key, required this.user}); 
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -29,12 +32,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Homepage'),
+        title: Text('Selamat datang, ${widget.user.username}!'),
         backgroundColor: Colors.blue,
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.pushReplacementNamed(context, '/login');
+              Navigator.pushReplacementNamed(context, '/logout');
             },
             icon: const Icon(Icons.logout),
           ),
@@ -44,20 +47,20 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Colors.blue),
+            DrawerHeader(
+              decoration: const BoxDecoration(color: Colors.blue),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircleAvatar(
+                  const CircleAvatar(
                     radius: 30,
                     backgroundColor: Colors.white,
                     child: Icon(Icons.person, size: 40, color: Colors.blue),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Text(
-                    'Welcome User!',
-                    style: TextStyle(
+                    'Halo, ${widget.user.username}!',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -74,7 +77,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile(
               leading: const Icon(Icons.person),
               title: const Text('Profile'),
-              onTap: () => Navigator.pushNamed(context, '/profile'),
+              onTap: () => Navigator.pushNamed(
+                context,
+                '/profile',
+                arguments: widget.user,
+              ),
             ),
             ListTile(
               leading: const Icon(Icons.settings),
@@ -97,7 +104,8 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AdvancedExpenseListScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const AdvancedExpenseListScreen()),
                 );
               },
             ),
@@ -106,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.logout),
               title: const Text('Logout'),
               onTap: () {
-                Navigator.pushReplacementNamed(context, '/login');
+                Navigator.pushReplacementNamed(context, '/logout');
               },
             ),
           ],

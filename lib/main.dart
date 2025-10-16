@@ -5,11 +5,13 @@ import 'screens/home_screen.dart';
 import 'screens/profile_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/about_screen.dart';
-import 'screens/expense_screen.dart'; 
-import 'screens/category_screen.dart'; 
-import 'screens/statistics_screen.dart';
+import 'screens/expense_screen.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'models/user.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID', null);
   runApp(const MyApp());
 }
 
@@ -19,21 +21,79 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Navigation Demo',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      initialRoute: '/login',
-      routes: {
-        '/login': (context) => const LoginScreen(),
-        '/register': (context) => const RegisterScreen(),
-        '/': (context) => const HomeScreen(),
-        '/profile': (context) => const ProfileScreen(),
-        '/settings': (context) => const SettingsScreen(),
-        '/about': (context) => const AboutScreen(),
-        '/expense': (context) => const ExpenseScreen(), 
-        '/category': (context) => const CategoryScreen(), 
-        '/statistics': (context) => const StatisticsScreen(expenses: []),
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      ),
+      home: const LoginScreen(),
+      // 2. Hapus 'routes' dan gunakan 'onGenerateRoute' untuk rute yang butuh parameter
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/home':
+            // Ambil argumen yang dikirim saat navigasi
+            final user = settings.arguments as User;
+            return MaterialPageRoute(
+              builder: (context) => HomeScreen(user: user),
+            );
+          case '/profile':
+            // Argumen juga bisa dikirim ke profile jika diperlukan
+            final user = settings.arguments as User;
+            return MaterialPageRoute(
+              builder: (context) => ProfileScreen(user: user),
+            );
+          case '/settings':
+            return MaterialPageRoute(builder: (context) => const SettingsScreen());
+          case '/about':
+            return MaterialPageRoute(builder: (context) => const AboutScreen());
+          case '/expense':
+            return MaterialPageRoute(builder: (context) => const ExpenseScreen());
+          case '/logout':
+            return MaterialPageRoute(builder: (context) => const LoginScreen());
+          default:
+            // Jika rute tidak ditemukan, bisa arahkan ke halaman error atau default
+            return MaterialPageRoute(builder: (context) => const LoginScreen());
+        }
       },
     );
   }
 }
+
+// import 'package:flutter/material.dart';
+// import 'screens/login_screen.dart';
+// import 'screens/register_screen.dart';
+// import 'screens/home_screen.dart';
+// import 'screens/profile_screen.dart';
+// import 'screens/settings_screen.dart';
+// import 'screens/about_screen.dart';
+// import 'screens/expense_screen.dart'; 
+// import 'screens/category_screen.dart'; 
+// import 'screens/statistics_screen.dart';
+
+// void main() {
+//   runApp(const MyApp());
+// }
+
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       title: 'Navigation Demo',
+//       theme: ThemeData(primarySwatch: Colors.blue),
+//       initialRoute: '/login',
+//       routes: {
+//         '/login': (context) => const LoginScreen(),
+//         '/register': (context) => const RegisterScreen(),
+//         '/': (context) => const HomeScreen(),
+//         '/profile': (context) => const ProfileScreen(),
+//         '/settings': (context) => const SettingsScreen(),
+//         '/about': (context) => const AboutScreen(),
+//         '/expense': (context) => const ExpenseScreen(), 
+//         '/category': (context) => const CategoryScreen(), 
+//         '/statistics': (context) => const StatisticsScreen(expenses: []),
+//       },
+//     );
+//   }
+// }
