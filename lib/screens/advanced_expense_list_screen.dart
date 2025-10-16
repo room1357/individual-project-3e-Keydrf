@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/expense.dart';
-import 'statistics_screen.dart'; // pastikan file ini sudah ada
+import 'statistics_screen.dart';
+import 'export_screen.dart';
 
 class AdvancedExpenseListScreen extends StatefulWidget {
   const AdvancedExpenseListScreen({super.key});
@@ -354,6 +355,23 @@ class _AdvancedExpenseListScreenState extends State<AdvancedExpenseListScreen> {
     );
   }
 
+  void _openExportScreen() {
+    if (expenses.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Belum ada data pengeluaran untuk diekspor.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ExportScreen(expenses: expenses)),
+    );
+  }
+
   // 🔹 Konfirmasi hapus
   void _showDeleteDialog(Expense expense) {
     showDialog(
@@ -398,6 +416,11 @@ class _AdvancedExpenseListScreenState extends State<AdvancedExpenseListScreen> {
             icon: const Icon(Icons.bar_chart),
             tooltip: 'Statistik Pengeluaran',
             onPressed: _openStatisticsScreen,
+          ),
+          IconButton(
+            icon: const Icon(Icons.file_download),
+            tooltip: 'Export Data',
+            onPressed: _openExportScreen, 
           ),
         ],
       ),
