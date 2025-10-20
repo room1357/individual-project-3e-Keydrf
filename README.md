@@ -21,3 +21,4 @@ Berikut adalah video demo penggunaan fitur **Expense Manager**:
 <video width="320" height="240" controls>
     <source src="vid/demoflutter.mp4" type="video/mp4">
 </video>
+[![Tonton Demo Expense Manager](https://youtu.be/EeIY-mRSqqA)](https://youtu.be/EeIY-mRSqqA)
