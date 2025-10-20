@@ -15,99 +15,152 @@ class StatisticsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Statistik Pengeluaran'),
-        backgroundColor: Colors.blue,
+        title: const Text('Statistik Pengeluaran', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.indigo,
+        
+        elevation: 4,
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Ringkasan Pengeluaran',
-              style: Theme.of(context).textTheme.titleLarge,
+            // Kartu Ringkasan
+            Card(
+              elevation: 3,
+              color: Colors.indigo,
+              shape:
+                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Ringkasan Pengeluaran',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Total: Rp ${NumberFormat('#,###').format(total)}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
             const SizedBox(height: 16),
 
-            // Total pengeluaran
-            Text(
-              'Total: Rp ${NumberFormat('#,###').format(total)}',
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Grafik batang
+            // Grafik Batang
             Expanded(
-              child: BarChart(
-                BarChartData(
-                  alignment: BarChartAlignment.spaceAround,
-                  maxY: _getMaxY(grouped.values),
-                  gridData: FlGridData(show: true, horizontalInterval: 10000),
-                  borderData: FlBorderData(show: false),
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 45,
-                        interval: 10000,
-                        getTitlesWidget: (value, meta) => Text(
-                          'Rp ${value ~/ 1000}K',
-                          style: const TextStyle(fontSize: 10),
+              child: Card(
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: BarChart(
+                    BarChartData(
+                      alignment: BarChartAlignment.spaceAround,
+                      maxY: _getMaxY(grouped.values),
+                      gridData:
+                          FlGridData(show: true, horizontalInterval: 10000),
+                      borderData: FlBorderData(show: false),
+                      titlesData: FlTitlesData(
+                        leftTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 45,
+                            interval: 10000,
+                            getTitlesWidget: (value, meta) => Text(
+                              'Rp ${value ~/ 1000}K',
+                              style: const TextStyle(
+                                  fontSize: 10, color: Colors.indigo),
+                            ),
+                          ),
                         ),
+                        bottomTitles: AxisTitles(
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            getTitlesWidget: (value, meta) {
+                              final categories = grouped.keys.toList();
+                              if (value.toInt() < categories.length) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 6),
+                                  child: Text(
+                                    categories[value.toInt()],
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.indigo,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return const Text('');
+                            },
+                          ),
+                        ),
+                        rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
+                        topTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false)),
                       ),
+                      barGroups: _buildBarGroups(grouped),
                     ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (value, meta) {
-                          final categories = grouped.keys.toList();
-                          if (value.toInt() < categories.length) {
-                            return Padding(
-                              padding: const EdgeInsets.only(top: 6),
-                              child: Text(
-                                categories[value.toInt()],
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            );
-                          }
-                          return const Text('');
-                        },
-                      ),
-                    ),
-                    rightTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
-                    topTitles: const AxisTitles(
-                        sideTitles: SideTitles(showTitles: false)),
                   ),
-                  barGroups: _buildBarGroups(grouped),
                 ),
               ),
             ),
             const SizedBox(height: 10),
 
-            // Keterangan warna kategori
-            Wrap(
-              spacing: 12,
-              children: grouped.keys.map((category) {
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 14,
-                      height: 14,
-                      color: _getCategoryColor(category),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(category),
-                  ],
-                );
-              }).toList(),
+            // Keterangan Kategori
+            Card(
+              color: Colors.indigo,
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Wrap(
+                  spacing: 12,
+                  runSpacing: 8,
+                  children: grouped.keys.map((category) {
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 14,
+                          height: 14,
+                          decoration: BoxDecoration(
+                            color: _getCategoryColor(category),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          category,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
             ),
           ],
         ),
@@ -115,7 +168,6 @@ class StatisticsScreen extends StatelessWidget {
     );
   }
 
-  /// Mengelompokkan pengeluaran berdasarkan kategori
   Map<String, double> _groupExpensesByCategory(List<Expense> expenses) {
     final Map<String, double> grouped = {};
     for (var e in expenses) {
@@ -124,7 +176,6 @@ class StatisticsScreen extends StatelessWidget {
     return grouped;
   }
 
-  /// Membuat grup batang (bar) per kategori
   List<BarChartGroupData> _buildBarGroups(Map<String, double> grouped) {
     final categories = grouped.keys.toList();
     return List.generate(categories.length, (index) {
@@ -137,21 +188,20 @@ class StatisticsScreen extends StatelessWidget {
             toY: amount,
             color: _getCategoryColor(category),
             width: 22,
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(8),
           ),
         ],
       );
     });
   }
 
-  /// Mendapatkan batas maksimal Y (agar chart proporsional)
   double _getMaxY(Iterable<double> values) {
     if (values.isEmpty) return 100;
     final max = values.reduce((a, b) => a > b ? a : b);
     return (max / 10000).ceil() * 10000 + 10000;
   }
 
-  /// Warna tiap kategori
+  // Warna kategori tetap beragam (warna-warni)
   Color _getCategoryColor(String category) {
     switch (category) {
       case 'Makanan':
@@ -164,8 +214,12 @@ class StatisticsScreen extends StatelessWidget {
         return Colors.purple;
       case 'Pendidikan':
         return Colors.red;
+      case 'Kesehatan':
+        return Colors.teal;
+      case 'Lainnya':
+        return Colors.pink;
       default:
-        return Colors.grey;
+        return Colors.indigo; // untuk kategori baru tetap indigo biar konsisten
     }
   }
 }

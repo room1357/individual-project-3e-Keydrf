@@ -96,10 +96,30 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   void _deleteCategory(int index) {
-    setState(() {
-      _categories.removeAt(index);
-    });
-    _saveCategories();
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text("Hapus Kategori"),
+        content: Text("Apakah kamu yakin ingin menghapus kategori ini?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Batal"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () {
+              setState(() {
+                _categories.removeAt(index);
+              });
+              _saveCategories();
+              Navigator.pop(context);
+            },
+            child: const Text("Hapus"),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

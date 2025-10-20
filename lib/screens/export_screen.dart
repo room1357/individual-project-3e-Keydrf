@@ -16,27 +16,43 @@ class ExportScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Export Data Pengeluaran'),
-        backgroundColor: Colors.blue,
+        title: const Text(
+          'Export Data Pengeluaran',
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.indigo,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: Padding(
+      body: Container(
+        color: Colors.indigo.withOpacity(0.05),
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               'Pilih Format Export:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.indigo,
+              ),
             ),
             const SizedBox(height: 30),
 
             // Tombol Export CSV
             ElevatedButton.icon(
-              icon: const Icon(Icons.table_chart),
-              label: const Text('Export ke CSV'),
+              icon: const Icon(Icons.table_chart, color: Colors.white),
+              label: const Text(
+                'Export ke CSV',
+                style: TextStyle(color: Colors.white),
+              ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.indigo,
                 minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 3,
               ),
               onPressed: () async {
                 await _exportToCSV(context);
@@ -46,11 +62,18 @@ class ExportScreen extends StatelessWidget {
 
             // Tombol Export PDF
             ElevatedButton.icon(
-              icon: const Icon(Icons.picture_as_pdf),
-              label: const Text('Export ke PDF'),
+              icon: const Icon(Icons.picture_as_pdf, color: Colors.white),
+              label: const Text(
+                'Export ke PDF',
+                style: TextStyle(color: Colors.white),
+              ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: Colors.indigo,
                 minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 3,
               ),
               onPressed: () async {
                 await _exportToPDF(context);
@@ -77,21 +100,26 @@ class ExportScreen extends StatelessWidget {
 
       String csvData = const ListToCsvConverter().convert(rows);
 
-      // Simpan CSV universal
       await saveCSV(csvData, 'pengeluaran.csv');
 
-      if (!kIsWeb) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('CSV berhasil disimpan')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('CSV berhasil di-download di Web')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            kIsWeb
+                ? 'CSV berhasil di-download di Web'
+                : 'CSV berhasil disimpan',
+          ),
+          backgroundColor: Colors.indigo,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal export CSV: $e')),
+        SnackBar(
+          content: Text('Gagal export CSV: $e'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     }
   }
@@ -131,22 +159,26 @@ class ExportScreen extends StatelessWidget {
       );
 
       final pdfBytes = await pdf.save();
-
-      // Gunakan savePDF universal
       await savePDF(pdfBytes, 'pengeluaran.pdf');
 
-      if (!kIsWeb) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('PDF berhasil disimpan di Mobile/Desktop')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('PDF berhasil di-download di Web')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            kIsWeb
+                ? 'PDF berhasil di-download di Web'
+                : 'PDF berhasil disimpan di Mobile/Desktop',
+          ),
+          backgroundColor: Colors.indigo,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal export PDF: $e')),
+        SnackBar(
+          content: Text('Gagal export PDF: $e'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
       );
     }
   }

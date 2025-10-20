@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-// Asumsikan file user.dart memiliki model User dengan fullName dan email
+import 'package:shared_preferences/shared_preferences.dart';
 import '/models/user.dart';
 
-// 1. Ubah menjadi StatefulWidget
 class ProfileScreen extends StatefulWidget {
   final User user;
   const ProfileScreen({super.key, required this.user});
@@ -12,61 +11,55 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // 2. Tambahkan Controller untuk mengelola input
   late TextEditingController _nameController;
   late TextEditingController _emailController;
+  late TextEditingController _usernameController;
 
-  // State untuk mengontrol mode edit
   bool _isEditing = false;
-  
-  // Asumsi: Jika model User memiliki properti username, ganti placeholder ini.
   late String _dummyUsername;
 
   @override
   void initState() {
     super.initState();
-    // Inisialisasi controller dengan data user yang diterima
     _nameController = TextEditingController(text: widget.user.fullName);
     _emailController = TextEditingController(text: widget.user.email);
-    
-    // Username dummy dari prefix email
     _dummyUsername = widget.user.email.split('@').first;
+    _usernameController = TextEditingController(text: _dummyUsername);
+
+    _loadProfile();
   }
 
   @override
   void dispose() {
-    // Bersihkan controller saat widget dihapus
     _nameController.dispose();
     _emailController.dispose();
+    _usernameController.dispose();
     super.dispose();
   }
 
-  // 3. Fungsi untuk mengganti mode Edit/View dan menyimpan data
+  Future<void> _loadProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _nameController.text = prefs.getString('user_full_name') ?? widget.user.fullName;
+      _emailController.text = prefs.getString('user_email') ?? widget.user.email;
+      _usernameController.text = prefs.getString('user_username') ?? _dummyUsername;
+    });
+  }
+
   void _toggleEditSave() {
     if (_isEditing) {
-      // Jika mode edit, lakukan proses simpan
       _saveProfile();
     }
-    // Ganti state untuk berpindah mode
     setState(() {
       _isEditing = !_isEditing;
     });
   }
 
-  void _saveProfile() {
-    // ⚠️ Implementasi ini HANYA menyimpan ke state lokal (controller).
-    // Untuk penyimpanan PERMANEN, Anda perlu:
-    // 1. Memperbarui objek User di luar widget ini (misalnya, di parent widget/Provider/Bloc).
-    // 2. Mengirim data ke database/API.
-
-    final newFullName = _nameController.text;
-    final newEmail = _emailController.text;
-
-    // TODO: Validasi input (misalnya, format email)
-
-    // Jika Anda ingin memperbarui objek User lokal:
-    // widget.user.fullName = newFullName; // HANYA jika properti mutable (tidak disarankan)
-    // Sebaiknya panggil fungsi callback ke parent untuk update global.
+  Future<void> _saveProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_full_name', _nameController.text);
+    await prefs.setString('user_email', _emailController.text);
+    await prefs.setString('user_username', _usernameController.text);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Profil berhasil disimpan!')),
@@ -74,15 +67,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _logout() {
-    // Navigasi ke rute logout
     Navigator.pushReplacementNamed(context, '/logout');
   }
 
-  // Fungsi pembantu untuk membuat baris detail atau input field
-  Widget _buildDetailField(String label, TextEditingController controller, bool isEditable) {
-    // Untuk Username dan Email, kita pastikan hanya Username yang TIDAK bisa diedit
-    final bool canEdit = isEditable && label != 'Username';
-
+  Widget _buildDetailField(String label, TextEditingController controller, bool canEdit) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -109,12 +97,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType: label == 'Email' ? TextInputType.emailAddress : TextInputType.name,
+                    keyboardType: label == 'Email'
+                        ? TextInputType.emailAddress
+                        : TextInputType.name,
                     style: const TextStyle(fontSize: 16, color: Colors.black54),
                   )
                 : Text(
-                    // Jika tidak diedit, tampilkan teks biasa
-                    label == 'Username' ? _dummyUsername : controller.text,
+                    controller.text,
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.black54,
@@ -135,13 +124,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text(_isEditing ? 'Edit Profil' : 'Profil Pengguna'),
         backgroundColor: Colors.indigo,
         actions: [
-          // 4. Tombol Edit/Save
           IconButton(
             icon: Icon(_isEditing ? Icons.save : Icons.edit),
             tooltip: _isEditing ? 'Simpan Perubahan' : 'Ubah Profil',
             onPressed: _toggleEditSave,
           ),
-          // Tambahkan tombol Logout di AppBar saat tidak dalam mode edit
           if (!_isEditing)
             IconButton(
               icon: const Icon(Icons.logout),
@@ -154,10 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Padding(
           padding: const EdgeInsets.all(30.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Avatar
               CircleAvatar(
                 radius: 60,
                 backgroundColor: Colors.indigo.shade100,
@@ -168,8 +152,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               const SizedBox(height: 40),
-              
-              // Detail Pengguna dalam Card
               Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(
@@ -180,25 +162,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
                     children: [
-                      // 1. Nama Lengkap
                       _buildDetailField('Name', _nameController, _isEditing),
                       const Divider(),
-
-                      // 2. Username (Tidak pernah bisa diedit, hanya ditampilkan)
-                      // Menggunakan controller email untuk menampilkan dummy username
-                      _buildDetailField('Username', _emailController, false), 
+                      _buildDetailField('Username', _usernameController, false),
                       const Divider(),
-
-                      // 3. Email
                       _buildDetailField('Email', _emailController, _isEditing),
                     ],
                   ),
                 ),
               ),
-
               const SizedBox(height: 40),
-
-              // Tombol Logout di body (hanya tampil saat mode view)
               if (!_isEditing)
                 SizedBox(
                   width: double.infinity,
