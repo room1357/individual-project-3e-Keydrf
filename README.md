@@ -8,7 +8,7 @@
 
 ## 📖 Deskripsi Project
 
-Aplikasi **Expense Manager** berbasis Flutter untuk membantu pengguna mencatat pemasukan, pengeluaran, dan memantau statistik keuangan pribadi. Cocok untuk latihan Flutter dan manajemen data sederhana.  
+Aplikasi **Expense Manager** berbasis Flutter untuk membantu pengguna mencatat pemasukan, pengeluaran, dan memantau statistik keuangan pribadi. Cocok untuk latihan Flutter dan manajemen data sederhana.  (note pemasukan masih dalam pengembangan)
 
 ---
 
