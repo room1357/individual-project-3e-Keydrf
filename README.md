@@ -17,9 +17,9 @@ Aplikasi **Expense Manager** berbasis Flutter untuk membantu pengguna mencatat p
 | Fitur | Screenshot | Deskripsi |
 |-------|------------|-----------|
 | **Daftar Transaksi** | ![Daftar Transaksi](https://github.com/room1357/individual-project-3e-Keydrf/blob/main/vid/img1.png) | Menampilkan semua transaksi yang telah dicatat. |
-| **Tambah Pengeluaran** | ![Tambah Pengeluaran](vid/img2.jpg) | Menambahkan catatan baru untuk pengeluaran. Input: nama transaksi, jumlah, kategori. |
-| **Edit Pengeluaran** | ![Edit Pengeluaran](vid/img2.jpg) | Mengubah transaksi yang dipilih. Input: nama transaksi, jumlah, kategori. |
-| **Filter Transaksi** | ![Filter 1](vid/img8.jpg)<br>![Filter 2](vid/img9.jpg) | Memfilter transaksi berdasarkan kategori atau rentang tanggal. Memudahkan analisis per periode tertentu. |
+| **Tambah Pengeluaran** | ![Tambah Pengeluaran](https://github.com/room1357/individual-project-3e-Keydrf/blob/main/vid/img2.png) | Menambahkan catatan baru untuk pengeluaran. Input: nama transaksi, jumlah, kategori. |
+| **Edit Pengeluaran** | ![Edit Pengeluaran](https://github.com/room1357/individual-project-3e-Keydrf/blob/main/vid/img3.png) | Mengubah transaksi yang dipilih. Input: nama transaksi, jumlah, kategori. |
+| **Filter Transaksi** | ![Filter 1](https://github.com/room1357/individual-project-3e-Keydrf/blob/main/vid/img8.png)<br>![Filter 2](vid/img9.png) | Memfilter transaksi berdasarkan kategori atau rentang tanggal. Memudahkan analisis per periode tertentu. |
 | **Tambah Kategori** | ![Tambah Kategori](vid/img4.jpg) | Menambahkan kategori baru. Input: nama kategori. |
 | **Edit Kategori** | ![Edit Kategori](vid/img5.jpg) | Mengubah kategori yang dipilih. Input: nama kategori. |
 | **Statistik** | ![Statistik](vid/img6.jpg) | Menampilkan grafik bar proporsi pengeluaran per kategori. Membantu memahami pola pengeluaran. |
