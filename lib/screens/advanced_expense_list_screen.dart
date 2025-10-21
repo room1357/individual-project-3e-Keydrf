@@ -187,7 +187,8 @@ class _AdvancedExpenseListScreenState extends State<AdvancedExpenseListScreen> {
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
                           iconSize: 20,
-                          icon: const Icon(Icons.edit, color: Colors.blueAccent),
+                          icon:
+                              const Icon(Icons.edit, color: Colors.blueAccent),
                           onPressed: () {
                             final controller =
                                 TextEditingController(text: categories[i]);
@@ -207,8 +208,7 @@ class _AdvancedExpenseListScreenState extends State<AdvancedExpenseListScreen> {
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
-                                      final newName =
-                                          controller.text.trim();
+                                      final newName = controller.text.trim();
                                       if (newName.isNotEmpty) {
                                         setDialogState(() {
                                           categories[i] = newName;
@@ -229,7 +229,8 @@ class _AdvancedExpenseListScreenState extends State<AdvancedExpenseListScreen> {
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
                           iconSize: 20,
-                          icon: const Icon(Icons.delete, color: Colors.redAccent),
+                          icon: const Icon(Icons.delete,
+                              color: Colors.redAccent),
                           onPressed: () {
                             if (categories.length > 1) {
                               setDialogState(() {
@@ -297,7 +298,7 @@ class _AdvancedExpenseListScreenState extends State<AdvancedExpenseListScreen> {
   void _navigateToExport() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => ExportScreen(expenses: _expenses)),
+      MaterialPageRoute(builder: (_) => const ExportScreen()),
     );
   }
 
@@ -333,7 +334,7 @@ class _AdvancedExpenseListScreenState extends State<AdvancedExpenseListScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.file_download, color: Colors.white),
-            tooltip: 'Ekspor CSV',
+            tooltip: 'Ekspor CSV/PDF',
             onPressed: _navigateToExport,
           ),
         ],
@@ -354,9 +355,10 @@ class _AdvancedExpenseListScreenState extends State<AdvancedExpenseListScreen> {
                   ),
                   items: [
                     const DropdownMenuItem(
-                        value: null,
-                        child: Text('Semua',
-                            style: TextStyle(color: Colors.white))),
+                      value: null,
+                      child:
+                          Text('Semua', style: TextStyle(color: Colors.white)),
+                    ),
                     ...categories.map(
                       (cat) => DropdownMenuItem(
                         value: cat,
@@ -416,6 +418,8 @@ class _AdvancedExpenseListScreenState extends State<AdvancedExpenseListScreen> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
                           leading: CircleAvatar(
                             backgroundColor: Colors.indigo.shade400,
                             child: const Icon(
@@ -434,50 +438,47 @@ class _AdvancedExpenseListScreenState extends State<AdvancedExpenseListScreen> {
                             style: const TextStyle(height: 1.3),
                           ),
                           isThreeLine: true,
-                          trailing: SizedBox(
-                            width: 90,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  currencyFormat.format(exp.amount),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.redAccent,
+                          
+                          trailing: Wrap(
+                            alignment: WrapAlignment.center,
+                            direction: Axis.vertical,
+                            spacing: 4,
+                            children: [
+                              Text(
+                                currencyFormat.format(exp.amount),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.redAccent,
+                                ),
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                    iconSize: 20,
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.blueAccent,
+                                    ),
+                                    onPressed: () => _openExpenseDialog(
+                                        existingExpense: exp),
                                   ),
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    IconButton(
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                      iconSize: 20,
-                                      icon: const Icon(
-                                        Icons.edit,
-                                        color: Colors.blueAccent,
-                                      ),
-                                      onPressed: () =>
-                                          _openExpenseDialog(existingExpense: exp),
+                                  const SizedBox(width: 4),
+                                  IconButton(
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                    iconSize: 20,
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.redAccent,
                                     ),
-                                    const SizedBox(width: 4),
-                                    IconButton(
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                      iconSize: 20,
-                                      icon: const Icon(
-                                        Icons.delete,
-                                        color: Colors.redAccent,
-                                      ),
-                                      onPressed: () => _deleteExpense(exp.id),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                    onPressed: () => _deleteExpense(exp.id),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
                       );

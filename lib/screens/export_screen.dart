@@ -1,16 +1,100 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import '../models/expense.dart';
 import 'package:csv/csv.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:open_filex/open_filex.dart';
-import '../utils/save_utils.dart';
+import 'package:printing/printing.dart';
 
 class ExportScreen extends StatelessWidget {
-  final List<Expense> expenses;
+  const ExportScreen({super.key});
 
-  const ExportScreen({super.key, required this.expenses});
+  Future<void> exportCSV(BuildContext context) async {
+    // Contoh data dummy (bisa kamu ganti dari database atau API)
+    final data = [
+      ['Tanggal', 'Keterangan', 'Jumlah'],
+      ['2025-10-21', 'Beli alat tulis', '50000'],
+      ['2025-10-22', 'Biaya transport', '30000'],
+    ];
+
+    // Ubah ke format CSV
+    String csvData = const ListToCsvConverter().convert(data);
+
+    // Tentukan lokasi penyimpanan
+    final directory = await getExternalStorageDirectory();
+    final path = '${directory!.path}/data_pengeluaran.csv';
+
+    // Tulis file
+    final file = File(path);
+    await file.writeAsString(csvData);
+
+    // Notifikasi
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('CSV berhasil diexport ke:\n$path'),
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  Future<void> exportPDF(BuildContext context) async {
+    final pdf = pw.Document();
+
+    // Contoh data
+    final data = [
+      ['Tanggal', 'Keterangan', 'Jumlah'],
+      ['2025-10-21', 'Beli alat tulis', '50000'],
+      ['2025-10-22', 'Biaya transport', '30000'],
+    ];
+
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context ctx) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text('Laporan Pengeluaran',
+                  style: pw.TextStyle(
+                    fontSize: 22,
+                    fontWeight: pw.FontWeight.bold,
+                  )),
+              pw.SizedBox(height: 20),
+              pw.Table.fromTextArray(
+                data: data,
+                border: pw.TableBorder.all(),
+                headerStyle: pw.TextStyle(
+                    fontWeight: pw.FontWeight.bold, color: PdfColors.white),
+                headerDecoration: const pw.BoxDecoration(
+                  color: PdfColors.indigo,
+                ),
+                cellAlignment: pw.Alignment.centerLeft,
+              ),
+            ],
+          );
+        },
+      ),
+    );
+
+    // Simpan ke file
+    final directory = await getExternalStorageDirectory();
+    final path = '${directory!.path}/data_pengeluaran.pdf';
+    final file = File(path);
+    await file.writeAsBytes(await pdf.save());
+
+    // Tampilkan notifikasi
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('PDF berhasil diexport ke:\n$path'),
+        backgroundColor: Colors.green,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+
+    // Opsional: Buka PDF langsung
+    await Printing.sharePdf(bytes: await pdf.save(), filename: 'data_pengeluaran.pdf');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +138,7 @@ class ExportScreen extends StatelessWidget {
                 ),
                 elevation: 3,
               ),
-              onPressed: () async {
-                await _exportToCSV(context);
-              },
+              onPressed: () async => await exportCSV(context),
             ),
             const SizedBox(height: 20),
 
@@ -75,111 +157,11 @@ class ExportScreen extends StatelessWidget {
                 ),
                 elevation: 3,
               ),
-              onPressed: () async {
-                await _exportToPDF(context);
-              },
+              onPressed: () async => await exportPDF(context),
             ),
           ],
         ),
       ),
     );
-  }
-
-  /// ===================== EXPORT KE CSV ======================
-  Future<void> _exportToCSV(BuildContext context) async {
-    try {
-      final List<List<dynamic>> rows = [
-        ['Judul', 'Kategori', 'Tanggal', 'Jumlah (Rp)'],
-        ...expenses.map((e) => [
-              e.title,
-              e.category,
-              DateFormat('dd-MM-yyyy').format(e.date),
-              e.amount,
-            ])
-      ];
-
-      String csvData = const ListToCsvConverter().convert(rows);
-
-      await saveCSV(csvData, 'pengeluaran.csv');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            kIsWeb
-                ? 'CSV berhasil di-download di Web'
-                : 'CSV berhasil disimpan',
-          ),
-          backgroundColor: Colors.indigo,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Gagal export CSV: $e'),
-          backgroundColor: Colors.redAccent,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
-  }
-
-  /// ===================== EXPORT KE PDF ======================
-  Future<void> _exportToPDF(BuildContext context) async {
-    try {
-      final pdf = pw.Document();
-
-      pdf.addPage(
-        pw.Page(
-          build: (pw.Context context) {
-            return pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text(
-                  'Laporan Pengeluaran',
-                  style: pw.TextStyle(
-                    fontSize: 20,
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                ),
-                pw.SizedBox(height: 20),
-                pw.Table.fromTextArray(
-                  headers: ['Judul', 'Kategori', 'Tanggal', 'Jumlah (Rp)'],
-                  data: expenses.map((e) => [
-                        e.title,
-                        e.category,
-                        DateFormat('dd-MM-yyyy').format(e.date),
-                        e.amount.toStringAsFixed(0),
-                      ]).toList(),
-                ),
-              ],
-            );
-          },
-        ),
-      );
-
-      final pdfBytes = await pdf.save();
-      await savePDF(pdfBytes, 'pengeluaran.pdf');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            kIsWeb
-                ? 'PDF berhasil di-download di Web'
-                : 'PDF berhasil disimpan di Mobile/Desktop',
-          ),
-          backgroundColor: Colors.indigo,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Gagal export PDF: $e'),
-          backgroundColor: Colors.redAccent,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
   }
 }
