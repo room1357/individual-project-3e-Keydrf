@@ -16,7 +16,7 @@ Aplikasi **Expense Manager** berbasis Flutter untuk membantu pengguna mencatat p
 
 | Fitur | Screenshot | Deskripsi |
 |-------|------------|-----------|
-| **Daftar Transaksi** | ![Daftar Transaksi](vid/img1.jpg) | Menampilkan semua transaksi yang telah dicatat. |
+| **Daftar Transaksi** | ![Daftar Transaksi](https://github.com/room1357/individual-project-3e-Keydrf/blob/main/vid/img1.png) | Menampilkan semua transaksi yang telah dicatat. |
 | **Tambah Pengeluaran** | ![Tambah Pengeluaran](vid/img2.jpg) | Menambahkan catatan baru untuk pengeluaran. Input: nama transaksi, jumlah, kategori. |
 | **Edit Pengeluaran** | ![Edit Pengeluaran](vid/img2.jpg) | Mengubah transaksi yang dipilih. Input: nama transaksi, jumlah, kategori. |
 | **Filter Transaksi** | ![Filter 1](vid/img8.jpg)<br>![Filter 2](vid/img9.jpg) | Memfilter transaksi berdasarkan kategori atau rentang tanggal. Memudahkan analisis per periode tertentu. |
@@ -25,7 +25,7 @@ Aplikasi **Expense Manager** berbasis Flutter untuk membantu pengguna mencatat p
 | **Statistik** | ![Statistik](vid/img6.jpg) | Menampilkan grafik bar proporsi pengeluaran per kategori. Membantu memahami pola pengeluaran. |
 | **Ekspor Data** | ![Ekspor Data](vid/img7.jpg) | Menyimpan data transaksi ke file CSV atau PDF. Memudahkan laporan keuangan. |
 
-> 💡 **Tip:** Gunakan GIF untuk menampilkan interaksi fitur agar README lebih hidup (contoh: `![Demo GIF](vid/demo.gif)`)
+
 
 ---
 
@@ -49,8 +49,3 @@ Project ini adalah titik awal Flutter. Jika ini proyek Flutter pertamamu:
 
 ---
 
-## 🎨 Tips Tambahan
-
-- Tambahkan **badge GitHub** untuk build atau Flutter version.  
-- Gunakan **ikon** untuk fitur agar lebih visual. Contoh: `💰`, `📊`, `📂`.  
-- Tambahkan **GIF animasi** untuk demo fitur supaya README interaktif.  
