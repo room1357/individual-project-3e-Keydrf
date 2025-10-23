@@ -17,6 +17,10 @@ Aplikasi **Expense Manager** berbasis Flutter untuk membantu pengguna mencatat p
 
 | Fitur | Screenshot | Deskripsi |
 |-------|------------|-----------|
+| **Login** | ![Login](vid/img10.png) | Menampilkan form login. |
+| **Register** | ![Register](vid/img11.png) | Menampilkan form register. |
+| **Home** | ![Home](vid/img12.png) | Menampilkan halaman utama. |
+| **Sidebar** | ![Sidebar](vid/img11.png) | Menampilkan menu sidebar. |
 | **Daftar Transaksi** | ![Daftar Transaksi](vid/img1.png) | Menampilkan semua transaksi yang telah dicatat. |
 | **Tambah Pengeluaran** | ![Tambah Pengeluaran](vid/img2.png) | Menambahkan catatan baru untuk pengeluaran. Input: nama transaksi, jumlah, kategori. |
 | **Edit Pengeluaran** | ![Edit Pengeluaran](vid/img3.png) | Mengubah transaksi yang dipilih. Input: nama transaksi, jumlah, kategori. |

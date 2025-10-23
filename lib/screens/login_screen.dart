@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '/models/user.dart';
 import 'register_screen.dart';
-import 'home_screen.dart'; // Import home_screen untuk navigasi
+import 'package:lottie/lottie.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -19,23 +19,20 @@ class _LoginScreenState extends State<LoginScreen> {
     final String password = _passwordController.text;
 
     try {
-      // Temukan objek user yang cocok, jangan hanya memeriksa keberadaannya.
       final User loggedInUser = users.firstWhere(
         (user) => user.username == username && user.password == password,
       );
 
-      // Jika user ditemukan, navigasi ke home DAN kirim data user.
       Navigator.pushReplacementNamed(
         context,
-        '/home', // Nama rute yang didefinisikan di onGenerateRoute
-        arguments: loggedInUser, // Kirim objek user sebagai argumen
+        '/home',
+        arguments: loggedInUser,
       );
     } catch (e) {
-      // Jika user tidak ditemukan (firstWhere melempar error)
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Username atau password salah!'),
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.redAccent,
         ),
       );
     }
@@ -50,92 +47,143 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Login'), backgroundColor: Colors.blue),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Logo
-            Container(
-              width: 100,
-              height: 100,
-              decoration: const BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.circle,
+      backgroundColor: const Color(0xFFF5F7FB),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 400),
+            child: Card(
+              elevation: 8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
               ),
-              child: const Icon(Icons.person, size: 50, color: Colors.white),
-            ),
-            const SizedBox(height: 32),
+              child: Padding(
+                padding: const EdgeInsets.all(28.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Logo
+                    Container(
+                      width: 90,
+                      height: 90,
+                      child:
+                      Lottie.network('https://lottie.host/5f874e53-547a-4df5-b785-5e58630e15e6/RKqPe59vzf.json'),
+                    ),
 
-            // Username Field
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(
-                labelText: 'Username',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.person),
+                    const SizedBox(height: 24),
+                    const Text(
+                      "Welcome Back!",
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1C1C1E),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Login to continue managing your expenses",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey, fontSize: 14),
+                    ),
+                    const SizedBox(height: 32),
+
+                    // Username
+                    TextField(
+                      controller: _usernameController,
+                      decoration: InputDecoration(
+                        labelText: 'Username',
+                        prefixIcon: const Icon(Icons.person_outline),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Password
+                    TextField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Login Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _login,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4C6EF5),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          elevation: 6,
+                        ),
+                        child: const Text(
+                          'LOGIN',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.1,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Register link
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Don’t have an account? ",
+                            style: TextStyle(fontSize: 14)),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const RegisterScreen(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            "Register",
+                            style: TextStyle(
+                              color: Color(0xFF4C6EF5),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-            const SizedBox(height: 16),
-
-            // Password Field
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.lock),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Login Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _login, // Panggil fungsi _login
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text(
-                  'LOGIN',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Don't have an account? ",
-                  style: TextStyle(fontSize: 14),
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.only(left: 2), // Sedikit jarak ke kiri
-                    minimumSize: const Size(0, 0), // Supaya lebih rapat
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const RegisterScreen()),
-                    );
-                  },
-                  child: const Text(
-                    "Register",
-                    style: TextStyle(fontSize: 14),
-                  ),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
     );

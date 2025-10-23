@@ -103,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Tentukan judul AppBar secara dinamis
     String appBarTitle;
     if (_selectedIndex == 0) {
-      appBarTitle = 'Halo, ${widget.user.username}!';
+      appBarTitle = 'Halo, ${widget.user.username}! 🙌';
     } else if (_selectedIndex == 1) {
       appBarTitle = 'Keranjang Belanja';
     } else {
