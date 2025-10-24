@@ -17,18 +17,18 @@ Aplikasi **Expense Manager** berbasis Flutter untuk membantu pengguna mencatat p
 
 | Fitur | Screenshot | Deskripsi |
 |-------|------------|-----------|
-| **Login** | ![Login](vid/img10.png) | Menampilkan form login. |
-| **Register** | ![Register](vid/img11.png) | Menampilkan form register. |
-| **Home** | ![Home](vid/img12.png) | Menampilkan halaman utama. |
-| **Sidebar** | ![Sidebar](vid/img13.png) | Menampilkan menu sidebar. |
-| **Daftar Transaksi** | ![Daftar Transaksi](vid/img1.png) | Menampilkan semua transaksi yang telah dicatat. |
-| **Tambah Pengeluaran** | ![Tambah Pengeluaran](vid/img2.png) | Menambahkan catatan baru untuk pengeluaran. Input: nama transaksi, jumlah, kategori. |
-| **Edit Pengeluaran** | ![Edit Pengeluaran](vid/img3.png) | Mengubah transaksi yang dipilih. Input: nama transaksi, jumlah, kategori. |
-| **Filter Transaksi** | ![Filter 1](vid/img8.png)<br>![Filter 2](vid/img9.png) | Memfilter transaksi berdasarkan kategori atau rentang tanggal. Memudahkan analisis per periode tertentu. |
-| **Tambah Kategori** | ![Tambah Kategori](vid/img4.png) | Menambahkan kategori baru. Input: nama kategori. |
-| **Edit Kategori** | ![Edit Kategori](vid/img5.png) | Mengubah kategori yang dipilih. Input: nama kategori. |
-| **Statistik** | ![Statistik](vid/img6.png) | Menampilkan grafik bar proporsi pengeluaran per kategori. Membantu memahami pola pengeluaran. |
-| **Ekspor Data** | ![Ekspor Data](vid/img7.png) | Menyimpan data transaksi ke file CSV atau PDF. Memudahkan laporan keuangan. |
+| **Login** | ![Login](vid/img10.png) | Menampilkan form login dan memverifikasi akun pengguna. Pengguna hanya dapat masuk jika email dan password valid.|
+| **Register** | ![Register](vid/img11.png) | Menampilkan form registrasi dan menyimpan data pengguna baru ke sistem. |
+| **Home** | ![Home](vid/img12.png) | Menampilkan halaman utama setelah login berhasil, berisi ringkasan produk yang tersedia. |
+| **Sidebar** | ![Sidebar](vid/img13.png) | Menampilkan menu navigasi yang berfungsi untuk berpindah antar halaman seperti Home, Profile, dan Exspenses. |
+| **Daftar Pengeluaran** | ![Daftar Pengeluaran](vid/img1.png) | Menampilkan semua pengeluaran yang telah dicatat. |
+| **Tambah Pengeluaran** | ![Tambah Pengeluaran](vid/img2.png) | Fitur berfungsi untuk menambahkan catatan baru pengeluaran. Input berupa nama transaksi, jumlah, dan kategori akan tersimpan otomatis. |
+| **Edit Pengeluaran** | ![Edit Pengeluaran](vid/img3.png) | Memungkinkan pengguna mengubah data pengeluaran yang sudah ada. Setiap perubahan akan diperbarui langsung di daftar transaksi. |
+| **Filter Transaksi** | ![Filter 1](vid/img8.png)<br>![Filter 2](vid/img9.png) | Memfilter transaksi berdasarkan kategori atau rentang tanggal. Fitur ini berfungsi penuh untuk menampilkan hasil filter sesuai kriteria pengguna. |
+| **Tambah Kategori** | ![Tambah Kategori](vid/img4.png) | Fitur aktif untuk menambahkan kategori baru ke daftar kategori yang tersedia. |
+| **Edit Kategori** | ![Edit Kategori](vid/img5.png) | Fitur yang berfungsi untuk memperbarui nama kategori yang sudah ada dan langsung memperbarui referensi di transaksi terkait. |
+| **Statistik** | ![Statistik](vid/img6.png) | Menampilkan grafik bar interaktif yang secara otomatis menghitung proporsi pengeluaran per kategori berdasarkan data transaksi terkini. |
+| **Ekspor Data** | ![Ekspor Data](vid/img7.png) | Fitur berfungsi untuk mengekspor seluruh data transaksi ke file CSV atau PDF agar mudah dibagikan atau digunakan sebagai laporan keuangan. |
 
 
 
